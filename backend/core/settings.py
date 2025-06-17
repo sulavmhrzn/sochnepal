@@ -31,6 +31,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "djoser",
+    "phonenumber_field",
 ]
 
 LOCAL_APPS = [
