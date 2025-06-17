@@ -52,7 +52,7 @@ const Navbar2 = () => {
                             <Link href="/login">Login</Link>
                         </Button>
                         <Button size="sm" asChild>
-                            <Link href="/register">Sign Up</Link>
+                            <Link href="/signup">Sign Up</Link>
                         </Button>
                     </div>
 
@@ -103,7 +103,7 @@ const Navbar2 = () => {
                                 </Button>
                                 <Button size="sm" className="w-full" asChild>
                                     <Link
-                                        href="/register"
+                                        href="/signup"
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         Sign Up
