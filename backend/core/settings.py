@@ -32,6 +32,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "djoser",
     "phonenumber_field",
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -43,6 +44,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -149,3 +151,6 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "SIGNING_KEY": env("JWT_SIGNING_KEY"),
 }
+
+# CORS
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
