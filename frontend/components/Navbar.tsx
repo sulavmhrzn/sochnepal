@@ -67,7 +67,12 @@ const Navbar2 = () => {
                                 </Button>
                             </>
                         ) : (
-                            <Button onClick={handleLogout}>Logout</Button>
+                            <>
+                                <Button variant="outline" asChild>
+                                    <Link href="/dashboard">Dashboard</Link>
+                                </Button>
+                                <Button onClick={handleLogout}>Logout</Button>
+                            </>
                         )}
                     </div>
 
@@ -136,9 +141,12 @@ const Navbar2 = () => {
                                         </Button>
                                     </>
                                 ) : (
-                                    <Button onClick={handleLogout}>
-                                        Logout
-                                    </Button>
+                                    <>
+                                        <Button>Dashboard</Button>
+                                        <Button onClick={handleLogout}>
+                                            Logout
+                                        </Button>
+                                    </>
                                 )}
                             </div>
                         </div>

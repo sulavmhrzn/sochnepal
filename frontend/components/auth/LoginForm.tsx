@@ -61,7 +61,7 @@ const LoginForm = () => {
                 email: form.getValues("email"),
             });
             toast.success("Logged in successfully");
-            router.push("/");
+            router.push("/dashboard");
             form.reset();
         },
         onError: (error) => {
