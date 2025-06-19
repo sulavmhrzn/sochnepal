@@ -143,7 +143,9 @@ REST_FRAMEWORK = {
 }
 
 # DJOSER
-DJOSER = {}
+DJOSER = {
+    "TOKEN_MODEL": None,
+}
 
 # SIMPLE JWT
 SIMPLE_JWT = {
