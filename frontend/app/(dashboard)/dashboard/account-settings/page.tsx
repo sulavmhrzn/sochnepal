@@ -1,5 +1,6 @@
 import AccountForm from "@/components/dashboard/account-settings/AccountForm";
 import ChangePassword from "@/components/dashboard/account-settings/ChangePasswordForm";
+import DangerZone from "@/components/dashboard/account-settings/DanzerZone";
 import ProfileForm from "@/components/dashboard/account-settings/ProfileForm";
 
 const AccountSettings = () => {
@@ -8,6 +9,7 @@ const AccountSettings = () => {
             <AccountForm />
             <ProfileForm />
             <ChangePassword />
+            <DangerZone />
         </div>
     );
 };
