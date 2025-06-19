@@ -6,8 +6,10 @@ import HomeCta from "@/components/home/HomeCta";
 const Home = () => {
     return (
         <div>
-            <HeroSection />
-            <StatsSection />
+            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 pb-16">
+                <HeroSection />
+                <StatsSection />
+            </div>
             <HowItWorksSection />
             <HomeCta />
         </div>
