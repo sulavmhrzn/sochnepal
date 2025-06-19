@@ -242,15 +242,19 @@ const AppSidebar = () => {
                                                 "U"}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold capitalize">
-                                            {`${authStore.user?.firstName} ${authStore.user?.lastName}`}
-                                        </span>
-                                        <span className="text-sm font-light">
-                                            {authStore.user?.email}
-                                        </span>
-                                    </div>
-                                    <ChevronUp className="ml-auto size-4" />
+                                    {authStore.user && (
+                                        <>
+                                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                                <span className="truncate font-semibold capitalize">
+                                                    {`${authStore.user.firstName} ${authStore.user.lastName}`}
+                                                </span>
+                                                <span className="text-sm font-light">
+                                                    {authStore.user.email}
+                                                </span>
+                                            </div>
+                                            <ChevronUp className="ml-auto size-4" />
+                                        </>
+                                    )}
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
