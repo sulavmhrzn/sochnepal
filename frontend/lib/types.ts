@@ -1,0 +1,39 @@
+export interface ReportListAPIResponse {
+    count: number;
+    next: null;
+    previous: null;
+    results: Report[];
+}
+
+export interface Report {
+    id: number;
+    title: string;
+    description: string;
+    category: {
+        id: number;
+        name: string;
+        slug: string;
+        name_nepali?: string;
+    };
+    status: string;
+    image: string;
+    location_lat: number;
+    location_lng: number;
+    address: string;
+    created_by: {
+        id: number;
+        full_name: string;
+    };
+    created_at: Date;
+    updated_at: Date;
+    is_flagged: boolean;
+}
+
+export interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    name_nepali: string;
+    color: string;
+    report_count: number;
+}
