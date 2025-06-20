@@ -1,13 +1,14 @@
 from django_filters import rest_framework as filters
+from rest_framework.generics import ListAPIView
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from .filters import ReportFilter
-from .models import Report
+from .models import Category, Report
 from .pagination import ReportPagination
 from .permissions import IsOwnerOrReadOnly
-from .serializers import ReportSerializer
+from .serializers import CategoryListSerializer, ReportSerializer
 
 
 class ReportViewSet(ModelViewSet):
@@ -21,3 +22,8 @@ class ReportViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+
+class CategoryView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryListSerializer

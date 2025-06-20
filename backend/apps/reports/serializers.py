@@ -5,6 +5,12 @@ from apps.accounts.models import User
 from .models import Category, Report
 
 
+class CategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "name", "slug", "name_nepali", "color", "report_count"]
+
+
 class CreatedBySerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
 
@@ -19,7 +25,7 @@ class CreatedBySerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name", "slug"]
+        fields = ["id", "name", "slug", "name_nepali"]
 
 
 class ReportSerializer(serializers.ModelSerializer):
