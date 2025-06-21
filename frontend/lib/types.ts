@@ -14,6 +14,7 @@ export interface Report {
         name: string;
         slug: string;
         name_nepali?: string;
+        color: string;
     };
     status: string;
     image: string;
@@ -24,8 +25,8 @@ export interface Report {
         id: number;
         full_name: string;
     };
-    created_at: Date;
-    updated_at: Date;
+    created_at: string;
+    updated_at: string;
     is_flagged: boolean;
 }
 

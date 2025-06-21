@@ -25,7 +25,7 @@ class CreatedBySerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name", "slug", "name_nepali"]
+        fields = ["id", "name", "slug", "name_nepali", "color"]
 
 
 class ReportSerializer(serializers.ModelSerializer):
