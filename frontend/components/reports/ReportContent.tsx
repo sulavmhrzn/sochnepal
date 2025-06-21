@@ -1,8 +1,14 @@
 import { Report } from "@/lib/types";
 import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
-import { MapIcon, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
+import dynamic from "next/dynamic";
+import MapSkeleton from "../ui/MapSkeleton";
 
+const Map = dynamic(() => import("./ReportMap"), {
+    loading: () => <MapSkeleton />,
+    ssr: false,
+});
 const ReportContent = ({ report }: { report: Report }) => {
     return (
         <div className="lg:col-span-2 space-y-8">
@@ -59,16 +65,13 @@ const ReportContent = ({ report }: { report: Report }) => {
                         </div>
 
                         {/* Map Placeholder */}
-                        <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center border border-gray-200">
-                            <div className="text-center">
-                                <MapIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                                <p className="text-gray-500 font-medium">
-                                    Interactive Map
-                                </p>
-                                <p className="text-sm text-gray-400">
-                                    Coming Soon
-                                </p>
-                            </div>
+                        <div className="bg-gray-100 rounded-lg h-100 flex items-center justify-center border border-gray-200">
+                            <Map
+                                posix={[
+                                    report.location_lat,
+                                    report.location_lng,
+                                ]}
+                            />
                         </div>
                     </div>
                 </CardContent>
