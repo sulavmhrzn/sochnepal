@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAuthStore } from "@/store/authStore";
-
+import { ProgressProvider } from "@bprogress/next/app";
 const Provider = ({ children }: { children: React.ReactNode }) => {
     const queryClient = new QueryClient();
     const authStore = useAuthStore();
@@ -11,10 +11,17 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         authStore.initializeAuth();
     }, []);
     return (
-        <QueryClientProvider client={queryClient}>
-            {children}
-            <ReactQueryDevtools />
-        </QueryClientProvider>
+        <ProgressProvider
+            height="5px"
+            color="oklch(0.705 0.213 47.604)"
+            options={{ showSpinner: false }}
+            shallowRouting
+        >
+            <QueryClientProvider client={queryClient}>
+                {children}
+                <ReactQueryDevtools />
+            </QueryClientProvider>
+        </ProgressProvider>
     );
 };
 

@@ -59,6 +59,8 @@ const LoginForm = () => {
         onSuccess: () => {
             authStore.login({
                 email: form.getValues("email"),
+                firstName: "",
+                lastName: "",
             });
             toast.success("Logged in successfully");
             router.push("/dashboard");

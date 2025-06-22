@@ -19,7 +19,7 @@ const Navbar2 = () => {
     };
     const navItems = [
         { href: "/reports", label: "Reports" },
-        { href: "/submit", label: "Submit Report" },
+        { href: "/reports/submit", label: "Submit Report" },
         { href: "/about", label: "About" },
         { href: "/contact", label: "Contact Us" },
     ];
