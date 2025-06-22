@@ -17,8 +17,19 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ReportListAPIResponse } from "@/lib/types";
 import { useCategories } from "@/hooks/use-categories";
+import { useSearchParams } from "next/navigation";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const ReportsPage = () => {
+    const params = useSearchParams();
+    const currentPage = params.get("page") || 1;
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [selectedCategory, setSelectedCategory] = useState("all");
@@ -29,7 +40,7 @@ const ReportsPage = () => {
         isError,
         refetch,
     } = useQuery<ReportListAPIResponse>({
-        queryKey: ["reports", selectedStatus, selectedCategory],
+        queryKey: ["reports", selectedStatus, selectedCategory, currentPage],
         queryFn: async () => {
             const response = await customAxios.get("/reports", {
                 params: {
@@ -43,6 +54,7 @@ const ReportsPage = () => {
                         searchQuery.trim().length !== 0
                             ? searchQuery
                             : undefined,
+                    page: currentPage,
                 },
             });
             return response.data;
@@ -244,6 +256,76 @@ const ReportsPage = () => {
                     </div>
                 )}
             </div>
+            {/* Minimalist Styled Pagination */}
+            {reports && reports.results.length > 0 && (
+                <div className="max-w-7xl mx-auto px-4 pb-8 sm:px-6 lg:px-8">
+                    <div className="flex flex-col items-center gap-4">
+                        {/* Results Summary */}
+                        <div className="text-sm text-gray-600 bg-white px-4 py-2 rounded-full border shadow-sm">
+                            <span className="font-medium text-gray-900">
+                                {reports.results.length}
+                            </span>{" "}
+                            {reports.results.length === 1
+                                ? "result"
+                                : "results"}{" "}
+                            on this page •{" "}
+                            <span className="font-medium text-gray-900">
+                                {reports.count}
+                            </span>{" "}
+                            total reports
+                        </div>
+
+                        {/* Pagination */}
+                        <div className="bg-white rounded-full shadow-sm border p-2">
+                            <Pagination>
+                                <PaginationContent className="gap-1">
+                                    <PaginationItem>
+                                        {reports?.previous ? (
+                                            <PaginationPrevious
+                                                href={`?page=${
+                                                    +currentPage - 1
+                                                }`}
+                                                className="rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                            />
+                                        ) : (
+                                            <PaginationPrevious
+                                                href="#"
+                                                className="pointer-events-none opacity-40 rounded-full"
+                                            />
+                                        )}
+                                    </PaginationItem>
+
+                                    <PaginationItem>
+                                        <PaginationLink
+                                            href={`?page=${currentPage}`}
+                                            isActive
+                                            className="rounded-full bg-primary text-white min-w-[40px] h-10 font-semibold"
+                                        >
+                                            {currentPage}
+                                        </PaginationLink>
+                                    </PaginationItem>
+
+                                    <PaginationItem>
+                                        {reports?.next ? (
+                                            <PaginationNext
+                                                href={`?page=${
+                                                    +currentPage + 1
+                                                }`}
+                                                className="rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                            />
+                                        ) : (
+                                            <PaginationNext
+                                                href="#"
+                                                className="pointer-events-none opacity-40 rounded-full"
+                                            />
+                                        )}
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
