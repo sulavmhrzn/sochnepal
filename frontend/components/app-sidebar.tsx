@@ -56,7 +56,7 @@ const AppSidebar = () => {
         },
         {
             title: "My Reports",
-            url: "#",
+            url: "/dashboard/my-reports",
             icon: FileText,
         },
         {

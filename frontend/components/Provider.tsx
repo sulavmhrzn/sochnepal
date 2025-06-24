@@ -4,8 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAuthStore } from "@/store/authStore";
 import { ProgressProvider } from "@bprogress/next/app";
+
+const queryClient = new QueryClient();
 const Provider = ({ children }: { children: React.ReactNode }) => {
-    const queryClient = new QueryClient();
     const authStore = useAuthStore();
     useEffect(() => {
         authStore.initializeAuth();
