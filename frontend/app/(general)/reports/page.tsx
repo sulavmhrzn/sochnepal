@@ -8,7 +8,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, AlertTriangle, Plus, FileText } from "lucide-react";
+import {
+    Search,
+    Filter,
+    AlertTriangle,
+    Plus,
+    FileText,
+    CircleX,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { customAxios } from "@/lib/customAxios";
 import ReportCardSkeleton from "@/components/reports/ReportCardSkeleton";
@@ -87,7 +94,7 @@ const ReportsPage = () => {
             </div>
 
             {/* Filters */}
-            <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-3">
                 <div className="bg-white rounded-lg border p-4">
                     <div className="flex flex-col sm:flex-row gap-4">
                         {/* Search */}
@@ -167,6 +174,20 @@ const ReportsPage = () => {
                         </Select>
                     </div>
                 </div>
+                {hasFilters && (
+                    <div>
+                        <Button
+                            variant={"outline"}
+                            onClick={() => {
+                                setSearchQuery("");
+                                setSelectedCategory("all");
+                                setSelectedStatus("all");
+                            }}
+                        >
+                            <CircleX /> Clear Filter
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {/* Reports Grid */}
