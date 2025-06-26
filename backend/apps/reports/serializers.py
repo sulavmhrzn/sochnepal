@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.accounts.models import User
 
-from .models import Category, Report
+from .models import Category, Report, UpVote
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -34,6 +34,15 @@ class ReportSerializer(serializers.ModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(
         write_only=True, source="category", queryset=Category.objects.all()
     )
+    up_votes = serializers.IntegerField(source="upvotes_count")
+    up_voted = serializers.SerializerMethodField("has_upvoted")
+
+    def has_upvoted(self, obj):
+        request = self.context.get("request")
+        if not request.user.is_authenticated:
+            return False
+        upvoted = obj.upvotes.filter(user=self.context["request"].user).exists()
+        return upvoted
 
     class Meta:
         model = Report
@@ -52,6 +61,8 @@ class ReportSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "is_flagged",
+            "up_votes",
+            "up_voted",
         ]
         read_only_fields = [
             "status",
@@ -60,3 +71,24 @@ class ReportSerializer(serializers.ModelSerializer):
             "is_flagged",
         ]
         extra_kwargs = {"address": {"required": True}}
+
+
+class UpVoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UpVote
+        fields = ["report", "user"]
+        read_only_fields = ["user"]
+
+    def create(self, validated_data):
+        data, created = UpVote.objects.get_or_create(
+            report=validated_data["report"], user=validated_data["user"]
+        )
+        print(
+            UpVote.objects.get_or_create(
+                report=validated_data["report"], user=validated_data["user"]
+            )
+        )
+        if created:
+            return data
+        data.delete()
+        return data

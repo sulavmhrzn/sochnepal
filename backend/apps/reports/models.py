@@ -58,7 +58,16 @@ class Report(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def upvotes_count(self):
+        return self.upvotes.count()
+
     class Meta:
         verbose_name = "report"
         verbose_name_plural = "reports"
         ordering = ["-created_at"]
+
+
+class UpVote(models.Model):
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name="upvotes")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="upvotes")

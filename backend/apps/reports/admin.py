@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Report
+from .models import Category, Report, UpVote
 
 
 @admin.register(Category)
@@ -21,6 +21,7 @@ class ReportAdmin(admin.ModelAdmin):
         "category",
         "status",
         "created_by",
+        "get_upvotes_count",
         "is_flagged",
         "created_at",
         "updated_at",
@@ -28,3 +29,13 @@ class ReportAdmin(admin.ModelAdmin):
     list_filter = ["is_flagged", "category", "status"]
     search_fields = ["title"]
     readonly_fields = ["created_at", "updated_at"]
+
+    def get_upvotes_count(self, obj):
+        return obj.upvotes_count
+
+    get_upvotes_count.short_description = "total up votes"
+
+
+@admin.register(UpVote)
+class UpVoteAdmin(admin.ModelAdmin):
+    list_display = ["user", "report"]
