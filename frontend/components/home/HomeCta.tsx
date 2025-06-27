@@ -15,7 +15,7 @@ const HomeCta = () => {
                     </p>
                     <div className="mt-8">
                         <Button size="lg" variant="outline" asChild>
-                            <Link href="/register">Get Started Today</Link>
+                            <Link href="/signup">Get Started Today</Link>
                         </Button>
                     </div>
                 </div>

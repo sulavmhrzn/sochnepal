@@ -40,7 +40,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <Link
-                                    href="/submit"
+                                    href="/reports/submit"
                                     className="text-gray-300 hover:text-white transition-colors"
                                 >
                                     Submit Report

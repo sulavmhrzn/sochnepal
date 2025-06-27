@@ -26,7 +26,7 @@ const HeroSection = () => {
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                     <Button size="lg" asChild>
-                        <Link href="/submit">Report an Issue</Link>
+                        <Link href="/reports/submit">Report an Issue</Link>
                     </Button>
                     <Button variant="outline" size="lg" asChild>
                         <Link href="/reports">View Reports</Link>

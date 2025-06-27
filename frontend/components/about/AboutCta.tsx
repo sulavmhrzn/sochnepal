@@ -19,7 +19,9 @@ const AboutCta = () => {
                             className="bg-white text-primary hover:bg-gray-50"
                             asChild
                         >
-                            <Link href="/submit">Report Your First Issue</Link>
+                            <Link href="/reports/submit">
+                                Report Your First Issue
+                            </Link>
                         </Button>
                         <Button
                             size="lg"
