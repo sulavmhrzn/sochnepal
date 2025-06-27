@@ -1,53 +1,15 @@
 "use client";
 
-import {
-    MapPin,
-    Calendar,
-    Clock,
-    AlertTriangle,
-    CheckCircle,
-    Eye,
-} from "lucide-react";
+import { MapPin, Calendar, Eye, ArrowUpIcon } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Report } from "@/lib/types";
+import { getStatusConfig } from "@/lib/utils";
 
 const ReportCard = ({ report }: { report: Report }) => {
-    const getStatusConfig = (status: string) => {
-        switch (status) {
-            case "pending":
-                return {
-                    label: "Pending",
-                    variant: "secondary" as const,
-                    icon: Clock,
-                    color: "text-gray-600",
-                };
-            case "in_progress":
-                return {
-                    label: "In Progress",
-                    variant: "default" as const,
-                    icon: AlertTriangle,
-                    color: "text-blue-600",
-                };
-            case "resolved":
-                return {
-                    label: "Resolved",
-                    variant: "default" as const,
-                    icon: CheckCircle,
-                    color: "text-green-600",
-                };
-            default:
-                return {
-                    label: status,
-                    variant: "secondary" as const,
-                    icon: Clock,
-                    color: "text-gray-600",
-                };
-        }
-    };
     const statusConfig = getStatusConfig(report.status);
     const StatusIcon = statusConfig.icon;
 
@@ -66,8 +28,8 @@ const ReportCard = ({ report }: { report: Report }) => {
                 />
                 <div className="absolute top-3 right-3">
                     <Badge
-                        variant={statusConfig.variant}
-                        className={`${statusConfig.color} bg-white/90 backdrop-blur-sm`}
+                        variant="default"
+                        className={`${statusConfig.className} bg-white/90 backdrop-blur-sm`}
                     >
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {statusConfig.label}
@@ -94,15 +56,27 @@ const ReportCard = ({ report }: { report: Report }) => {
                             <Calendar className="h-4 w-4 mr-1" />
                             {new Date(report.created_at).toLocaleDateString()}
                         </div>
-                        <Badge variant="outline" className="text-xs">
-                            {report.category.name}
+                        <Badge
+                            variant="outline"
+                            className="text-xs flex items-center gap-2"
+                        >
+                            <div
+                                className="w-2 h-2 rounded-full"
+                                style={{
+                                    backgroundColor: report.category.color,
+                                }}
+                            />
+                            <span className="capitalize">
+                                {report.category.name.toLowerCase()}
+                            </span>
                         </Badge>
                     </div>
 
                     <div className="flex items-center justify-between pt-2">
-                        <span className="text-sm text-gray-600">
-                            👍 {Math.round(Math.random() * 100)} votes
-                        </span>
+                        <div className="text-sm text-gray-600 flex items-center gap-2 font-bold">
+                            <ArrowUpIcon /> {report.up_votes}{" "}
+                            {report.up_votes === 1 ? "vote" : "votes"}
+                        </div>
                         <Button variant="outline" size="sm" asChild>
                             <Link href={`/reports/${report.id}`}>
                                 <Eye className="h-4 w-4 mr-1" />

@@ -30,7 +30,7 @@ const ReportDetailPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <ReportContent report={report} />
                     <div className="space-y-6">
-                        <ReportActionSide id={report.id} />
+                        <ReportActionSide report={report} />
                         <ReportDetailSide report={report} />
                         <ReporterInfo fullName={report.created_by.full_name} />
                     </div>

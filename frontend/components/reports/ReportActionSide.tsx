@@ -1,34 +1,82 @@
 "use client";
-import { Flag, Share2, ThumbsUp } from "lucide-react";
+import { ArrowUpIcon, Flag, Share2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import { useState } from "react";
+import { Report } from "@/lib/types";
+import { useAuthStore } from "@/store/authStore";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { customAxios } from "@/lib/customAxios";
+import { toast } from "sonner";
 
-const ReportActionSide = ({ id }: { id: number }) => {
-    const [upvoteCount, setUpvoteCount] = useState(0);
-    const [isUpvoted, setIsUpvoted] = useState(false);
-
-    const handleUpvote = () => {
-        setIsUpvoted(!isUpvoted);
-        setUpvoteCount((prev) => (isUpvoted ? prev - 1 : prev + 1));
-    };
+const ReportActionSide = ({ report }: { report: Report }) => {
+    const { isAuthenticated } = useAuthStore();
+    const queryClient = useQueryClient();
+    const { mutate, status } = useMutation({
+        mutationFn: async (id: number) => {
+            await customAxios.post("/reports/upvotes/", {
+                report: id,
+            });
+        },
+        onSuccess() {
+            queryClient.invalidateQueries({
+                queryKey: ["report"],
+            });
+        },
+        onError() {
+            toast.error("Failed to up vote the report. Please try again");
+        },
+    });
     return (
         <Card>
             <CardContent className="p-6">
                 <div className="space-y-4">
-                    <Button
-                        onClick={handleUpvote}
-                        variant={isUpvoted ? "default" : "outline"}
-                        className="w-full h-12 text-lg"
-                        size="lg"
-                    >
-                        <ThumbsUp
-                            className={`h-5 w-5 mr-3 ${
-                                isUpvoted ? "fill-current" : ""
-                            }`}
-                        />
-                        {isUpvoted ? "Upvoted" : "Upvote"} ({upvoteCount})
-                    </Button>
+                    {!isAuthenticated ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant={
+                                        report.up_voted ? "default" : "outline"
+                                    }
+                                    className="w-full h-12 text-lg bg-secondary cursor-not-allowed"
+                                    size="lg"
+                                >
+                                    <ArrowUpIcon
+                                        className={`size-5 mr-3 ${
+                                            report.up_voted
+                                                ? "fill-current"
+                                                : ""
+                                        }`}
+                                    />
+                                    {report.up_voted ? "Upvoted" : "Upvote"} (
+                                    {report.up_votes})
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>You must be logged in to upvote</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <Button
+                            variant={report.up_voted ? "default" : "outline"}
+                            className="w-full h-12 text-lg"
+                            size="lg"
+                            disabled={!isAuthenticated || status === "pending"}
+                            onClick={() => mutate(report.id)}
+                        >
+                            <ArrowUpIcon
+                                className={`size-5 mr-3 ${
+                                    report.up_voted ? "fill-current" : ""
+                                }`}
+                            />
+                            {report.up_voted ? "Upvoted" : "Upvote"} (
+                            {report.up_votes})
+                        </Button>
+                    )}
 
                     <Button variant="outline" className="w-full h-12">
                         <Share2 className="h-5 w-5 mr-3" />

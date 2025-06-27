@@ -32,13 +32,17 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ user: { email, firstName, lastName }, isAuthenticated: true });
     },
     async initializeAuth() {
-        const { status, data } = await customAxios.get("/auth/users/me");
-        if (status === 200)
-            this.login({
-                email: data.email,
-                firstName: data.first_name,
-                lastName: data.last_name,
-            });
+        try {
+            const { status, data } = await customAxios.get("/auth/users/me");
+            if (status === 200)
+                this.login({
+                    email: data.email,
+                    firstName: data.first_name,
+                    lastName: data.last_name,
+                });
+        } catch (error) {
+            console.log(error);
+        }
     },
     async logout() {
         localStorage.removeItem("sochNepal");

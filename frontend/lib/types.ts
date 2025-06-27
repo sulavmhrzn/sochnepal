@@ -28,6 +28,8 @@ export interface Report {
     created_at: string;
     updated_at: string;
     is_flagged: boolean;
+    up_votes: number;
+    up_voted: boolean;
 }
 
 export interface Category {
