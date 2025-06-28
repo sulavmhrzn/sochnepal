@@ -22,6 +22,7 @@ class ReportAdmin(admin.ModelAdmin):
         "status",
         "created_by",
         "get_upvotes_count",
+        "get_flags_count",
         "is_flagged",
         "created_at",
         "updated_at",
@@ -34,6 +35,11 @@ class ReportAdmin(admin.ModelAdmin):
         return obj.upvotes_count
 
     get_upvotes_count.short_description = "total up votes"
+
+    def get_flags_count(self, obj):
+        return obj.flags.count()
+
+    get_flags_count.short_description = "total flags"
 
 
 @admin.register(UpVote)

@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import CategoryView, ReportViewSet, UpVoteView
 
 router = DefaultRouter()
-router.register("", ReportViewSet, basename="reports")
+router.register("", ReportViewSet, basename="report")
 
 urlpatterns = [
     path("categories/", CategoryView.as_view(), name="category-list"),
