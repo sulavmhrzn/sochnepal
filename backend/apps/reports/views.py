@@ -31,6 +31,7 @@ class ReportViewSet(ModelViewSet):
             "flags__flagged_by",
         )
         .all()
+        .order_by("-created_at")
     )
     parser_classes = [JSONParser, MultiPartParser]
     pagination_class = ReportPagination

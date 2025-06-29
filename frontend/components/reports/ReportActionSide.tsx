@@ -75,7 +75,7 @@ const ReportActionSide = ({ report }: { report: Report }) => {
                         <>
                             <Button
                                 variant={
-                                    report.up_voted ? "default" : "outline"
+                                    report.has_upvoted ? "default" : "outline"
                                 }
                                 className="w-full h-12 text-lg"
                                 size="lg"
@@ -86,13 +86,13 @@ const ReportActionSide = ({ report }: { report: Report }) => {
                             >
                                 <ArrowUpIcon
                                     className={`size-5 mr-3 ${
-                                        report.up_voted ? "fill-current" : ""
+                                        report.has_upvoted ? "fill-current" : ""
                                     }`}
                                 />
-                                {report.up_voted ? "Upvoted" : "Upvote"} (
+                                {report.has_upvoted ? "Upvoted" : "Upvote"} (
                                 {report.up_votes})
                             </Button>
-                            <ReportIssue reportId={report.id} />
+                            <ReportIssue report={report} />
                         </>
                     )}
                     <Button variant="outline" className="w-full h-12">

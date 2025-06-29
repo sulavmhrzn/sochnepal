@@ -33,8 +33,9 @@ import { useMutation } from "@tanstack/react-query";
 import { customAxios } from "@/lib/customAxios";
 import { toast } from "sonner";
 import axios from "axios";
+import { Report } from "@/lib/types";
 
-const ReportIssue = ({ reportId }: { reportId: number }) => {
+const ReportIssue = ({ report }: { report: Report }) => {
     const issueSchema = z.object({
         reason: z.enum(["spam", "duplicate", "offensive", "other"]),
         description: z.string(),
@@ -51,7 +52,7 @@ const ReportIssue = ({ reportId }: { reportId: number }) => {
             await customAxios.post("/flags/", {
                 reason: data.reason,
                 description: data.description,
-                report: reportId,
+                report: report.id,
             });
         },
         onSuccess() {
@@ -94,10 +95,12 @@ const ReportIssue = ({ reportId }: { reportId: number }) => {
                     <Button
                         className="w-full h-12"
                         variant={"outline"}
-                        disabled={isPending}
+                        disabled={isPending || report.has_reported}
                     >
                         <Flag className="h-5 w-5 mr-3" />
-                        Report Issue
+                        {report.has_reported
+                            ? "You have already reported this issue"
+                            : "Report Issue"}
                     </Button>
                 </DialogTrigger>
                 <DialogContent>

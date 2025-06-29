@@ -29,7 +29,8 @@ export interface Report {
     updated_at: string;
     is_flagged: boolean;
     up_votes: number;
-    up_voted: boolean;
+    has_upvoted: boolean;
+    has_reported: boolean;
 }
 
 export interface Category {
