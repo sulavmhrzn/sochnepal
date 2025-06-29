@@ -34,15 +34,34 @@ class ReportSerializer(serializers.ModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(
         write_only=True, source="category", queryset=Category.objects.all()
     )
-    up_votes = serializers.IntegerField(source="upvotes_count")
-    up_voted = serializers.SerializerMethodField("has_upvoted")
+    up_votes = serializers.SerializerMethodField()
+    has_upvoted = serializers.SerializerMethodField()
+    has_reported = serializers.SerializerMethodField()
 
-    def has_upvoted(self, obj):
-        request = self.context.get("request")
-        if not request.user.is_authenticated:
-            return False
-        upvoted = obj.upvotes.filter(user=self.context["request"].user).exists()
-        return upvoted
+    def get_up_votes(self, obj):
+        if hasattr(obj, "total_upvotes"):
+            return obj.total_upvotes
+        return obj.upvotes_count
+
+    def get_has_upvoted(self, obj):
+        user = self.context["request"].user
+
+        if hasattr(obj, "user_upvoted"):
+            return obj.user_upvoted
+        return (
+            obj.upvotes.filter(user=user).exists() if user.is_authenticated else False
+        )
+
+    def get_has_reported(self, obj):
+        user = self.context["request"].user
+
+        if hasattr(obj, "user_flagged"):
+            return obj.user_flagged
+        return (
+            obj.flags.filter(flagged_by=user).exists()
+            if user.is_authenticated
+            else False
+        )
 
     class Meta:
         model = Report
@@ -62,7 +81,8 @@ class ReportSerializer(serializers.ModelSerializer):
             "updated_at",
             "is_flagged",
             "up_votes",
-            "up_voted",
+            "has_upvoted",
+            "has_reported",
         ]
         read_only_fields = [
             "status",

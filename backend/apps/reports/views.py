@@ -1,3 +1,4 @@
+from django.db.models import Count, Exists, OuterRef
 from django_filters import rest_framework as filters
 from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView, ListAPIView
@@ -5,6 +6,8 @@ from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from apps.flags.models import Flag
 
 from .filters import ReportFilter
 from .models import Category, Report, UpVote
@@ -16,11 +19,46 @@ from .serializers import CategoryListSerializer, ReportSerializer, UpVoteSeriali
 class ReportViewSet(ModelViewSet):
     serializer_class = ReportSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-    queryset = Report.objects.select_related("category", "created_by").all()
+    queryset = (
+        Report.objects.select_related(
+            "category",
+            "created_by",
+        )
+        .prefetch_related(
+            "upvotes",
+            "flags",
+            "upvotes__user",
+            "flags__flagged_by",
+        )
+        .all()
+    )
     parser_classes = [JSONParser, MultiPartParser]
     pagination_class = ReportPagination
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = ReportFilter
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        queryset = queryset.annotate(total_upvotes=Count("upvotes", distinct=True))
+
+        if self.request.user.is_authenticated:
+            queryset = queryset.annotate(
+                user_upvoted=Exists(
+                    UpVote.objects.filter(
+                        report=OuterRef("pk"), user=self.request.user
+                    ),
+                )
+            )
+            queryset = queryset.annotate(
+                user_flagged=Exists(
+                    Flag.objects.filter(
+                        report=OuterRef("pk"), flagged_by=self.request.user
+                    )
+                )
+            )
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
