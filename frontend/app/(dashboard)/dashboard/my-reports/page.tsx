@@ -1,7 +1,4 @@
 "use client";
-import { customAxios } from "@/lib/customAxios";
-import { Report } from "@/lib/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,42 +21,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { formatDateTime, getStatusConfig } from "@/lib/utils";
 import ReportSkeleton from "@/components/dashboard/my-reports/ReportSkeleton";
-import { toast } from "sonner";
+import { useDeleteReport } from "@/hooks/use-delete-report";
+import { useGetCurrentUserReports } from "@/hooks/use-reports";
 
 const MyReportsPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
-    const queryClient = useQueryClient();
+    const { mutate: deleteMutate, status: deleteStatus } = useDeleteReport();
     const {
         data: reports,
         isLoading,
         isError,
-    } = useQuery({
-        queryKey: ["my-reports", selectedStatus],
-        queryFn: async () => {
-            const response = await customAxios.get("/reports/my", {
-                params: {
-                    status:
-                        selectedStatus !== "all" ? selectedStatus : undefined,
-                },
-            });
-            return response.data as Report[];
-        },
-    });
-    const { mutate: deleteMutate, status: deleteStatus } = useMutation({
-        mutationFn: async (id: number) => {
-            await customAxios.delete(`/reports/${id}/`);
-        },
-        onSuccess: () => {
-            toast.success("Your report has been deleted successfully");
-            queryClient.invalidateQueries({
-                queryKey: ["my-reports"],
-            });
-        },
-        onError() {
-            toast.error("Could not delete your report at the moment");
-        },
-    });
+    } = useGetCurrentUserReports({ selectedStatus });
 
     const filteredReports = reports?.filter((report) => {
         const matchesSearch =

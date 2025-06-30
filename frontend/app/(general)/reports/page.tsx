@@ -16,13 +16,10 @@ import {
     FileText,
     CircleX,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { customAxios } from "@/lib/customAxios";
 import ReportCardSkeleton from "@/components/reports/ReportCardSkeleton";
 import ReportCard from "@/components/reports/ReportCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ReportListAPIResponse } from "@/lib/types";
 import { useCategories } from "@/hooks/use-categories";
 import { useSearchParams } from "next/navigation";
 import {
@@ -33,6 +30,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useReports } from "@/hooks/use-reports";
 
 const ReportsPage = () => {
     const params = useSearchParams();
@@ -40,33 +38,18 @@ const ReportsPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [selectedCategory, setSelectedCategory] = useState("all");
-
     const {
         data: reports,
-        isLoading,
         isError,
+        isLoading,
         refetch,
-    } = useQuery<ReportListAPIResponse>({
-        queryKey: ["reports", selectedStatus, selectedCategory, currentPage],
-        queryFn: async () => {
-            const response = await customAxios.get("/reports", {
-                params: {
-                    status:
-                        selectedStatus !== "all" ? selectedStatus : undefined,
-                    category:
-                        selectedCategory !== "all"
-                            ? selectedCategory
-                            : undefined,
-                    title:
-                        searchQuery.trim().length !== 0
-                            ? searchQuery
-                            : undefined,
-                    page: currentPage,
-                },
-            });
-            return response.data;
-        },
+    } = useReports({
+        selectedStatus: selectedStatus,
+        selectedCategory: selectedCategory,
+        currentPage: +currentPage,
+        searchQuery,
     });
+
     const { data: categories, isLoading: categoriesLoading } = useCategories();
     useEffect(() => {
         const timeout = setTimeout(() => {

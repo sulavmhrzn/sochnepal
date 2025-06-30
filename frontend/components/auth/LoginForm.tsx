@@ -12,8 +12,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
     Form,
@@ -23,67 +21,14 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { useMutation } from "@tanstack/react-query";
-import { customAxios } from "@/lib/customAxios";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import { useAuthStore } from "@/store/authStore";
-
-const loginSchema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-});
+import { loginSchema, useLogin } from "@/hooks/use-login";
 
 const LoginForm = () => {
-    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
-    const authStore = useAuthStore();
-
-    const form = useForm<z.infer<typeof loginSchema>>({
-        resolver: zodResolver(loginSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
-    });
-
-    const { mutate, isPending } = useMutation({
-        mutationFn: async (data: z.infer<typeof loginSchema>) => {
-            const response = await customAxios.post("/auth/jwt/cookie/", {
-                email: data.email,
-                password: data.password,
-            });
-            return response.data;
-        },
-        onSuccess: () => {
-            authStore.login({
-                email: form.getValues("email"),
-                firstName: "",
-                lastName: "",
-            });
-            toast.success("Logged in successfully");
-            router.push("/dashboard");
-            form.reset();
-        },
-        onError: (error) => {
-            if (axios.isAxiosError(error)) {
-                if (error.status === 401) {
-                    toast.error("Invalid credentials", {
-                        description:
-                            "Your email or password does not match. Please try again",
-                    });
-                    return;
-                }
-            }
-            toast.error("Something went wrong", {
-                description: "Could not process your request. Please try again",
-            });
-        },
-    });
+    const { mutate: login, isPending, form } = useLogin();
 
     const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-        mutate(values);
+        login({ email: values.email, password: values.password });
     };
 
     return (

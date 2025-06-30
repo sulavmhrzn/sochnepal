@@ -9,29 +9,12 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { customAxios } from "@/lib/customAxios";
-import { toast } from "sonner";
 import ReportIssue from "./ReportIssue";
+import ReportUpVote from "./ReportUpVote";
 
 const ReportActionSide = ({ report }: { report: Report }) => {
     const { isAuthenticated } = useAuthStore();
-    const queryClient = useQueryClient();
-    const { mutate, status } = useMutation({
-        mutationFn: async (id: number) => {
-            await customAxios.post("/reports/upvotes/", {
-                report: id,
-            });
-        },
-        onSuccess() {
-            queryClient.invalidateQueries({
-                queryKey: ["report"],
-            });
-        },
-        onError() {
-            toast.error("Failed to up vote the report. Please try again");
-        },
-    });
+
     return (
         <Card>
             <CardContent className="p-6">
@@ -73,25 +56,7 @@ const ReportActionSide = ({ report }: { report: Report }) => {
                         </>
                     ) : (
                         <>
-                            <Button
-                                variant={
-                                    report.has_upvoted ? "default" : "outline"
-                                }
-                                className="w-full h-12 text-lg"
-                                size="lg"
-                                disabled={
-                                    !isAuthenticated || status === "pending"
-                                }
-                                onClick={() => mutate(report.id)}
-                            >
-                                <ArrowUpIcon
-                                    className={`size-5 mr-3 ${
-                                        report.has_upvoted ? "fill-current" : ""
-                                    }`}
-                                />
-                                {report.has_upvoted ? "Upvoted" : "Upvote"} (
-                                {report.up_votes})
-                            </Button>
+                            <ReportUpVote report={report} />
                             <ReportIssue report={report} />
                         </>
                     )}

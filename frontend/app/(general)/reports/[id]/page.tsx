@@ -1,26 +1,18 @@
 "use client";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { customAxios } from "@/lib/customAxios";
 import { useParams } from "next/navigation";
 import ReporterInfo from "@/components/reports/ReporterInfo";
 import ReportDetailSide from "@/components/reports/ReportDetailSide";
 import ReportActionSide from "@/components/reports/ReportActionSide";
-import { Report } from "@/lib/types";
 import ReportHeroSection from "@/components/reports/ReportHeroSection";
 import ReportContent from "@/components/reports/ReportContent";
 import ReportNavigation from "@/components/reports/ReportNavigation";
+import { useReport } from "@/hooks/use-reports";
 
 const ReportDetailPage = () => {
     const params = useParams();
     const reportId = params.id as string;
 
-    const { data: report } = useSuspenseQuery({
-        queryKey: ["report", reportId],
-        queryFn: async () => {
-            const response = await customAxios.get(`/reports/${reportId}/`);
-            return response.data as Report;
-        },
-    });
+    const { data: report } = useReport(+reportId);
 
     return (
         <div className="min-h-screen bg-gray-50">

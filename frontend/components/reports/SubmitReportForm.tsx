@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { MapPin, Camera, AlertCircle, Trash2 } from "lucide-react";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
@@ -22,101 +21,19 @@ import {
     FormLabel,
     FormMessage,
 } from "../ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { customAxios } from "@/lib/customAxios";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { useCategories } from "@/hooks/use-categories";
-import axios from "axios";
-
-const ACCEPTED_IMAGE_MIME_TYPES = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-];
-const MAX_FILE_SIZE = 1024 * 1024 * 5;
-const reportSchema = z.object({
-    title: z.string().nonempty().min(5),
-    category_id: z.string().nonempty(),
-    description: z.string().nonempty().min(20),
-    address: z.string().nonempty(),
-    location_lat: z.coerce.number(),
-    location_lng: z.coerce.number(),
-    image: z
-        .instanceof(FileList)
-        .optional()
-        .refine((files) => {
-            if (!files) return true;
-            if (!files.length) return true;
-            return ACCEPTED_IMAGE_MIME_TYPES.includes(files[0].type);
-        }, "Only jpeg, jpg, png and webp are accepted")
-        .refine((files) => {
-            if (!files) return true;
-            if (!files.length) return true;
-            return files[0].size <= MAX_FILE_SIZE;
-        }, "Max file size is 5MB"),
-});
+import { reportSchema, useSubmitReport } from "@/hooks/use-submit-report";
+import { useGeoLocation } from "@/hooks/use-geo-location";
+import { toast } from "sonner";
 
 const SubmitReportForm = () => {
-    const router = useRouter();
     const [displayImage, setDisplayImage] = useState<File | null>(null);
-    const form = useForm<z.infer<typeof reportSchema>>({
-        resolver: zodResolver(reportSchema),
-    });
-    const imageRef = form.register("image");
     const { data: categories, isLoading: categoriesLoading } = useCategories();
-    const { mutate, isPending } = useMutation({
-        mutationFn: async (values: FormData) => {
-            await customAxios.post("/reports/", values);
-        },
-        onSuccess() {
-            toast.success(
-                "Report submitted successfully! We'll notify you of any updates."
-            );
-            router.push("/reports");
-        },
-        onError(error) {
-            console.log(error);
-            if (axios.isAxiosError(error)) {
-                if (error.status === 400) {
-                    const fieldMapping: Record<
-                        string,
-                        keyof z.infer<typeof reportSchema>
-                    > = {
-                        title: "title",
-                        description: "description",
-                        address: "address",
-                        location_lat: "location_lat",
-                        location_lng: "location_lng",
-                        image: "image",
-                    };
-                    const errorData = error.response?.data as {
-                        [key: string]: string | string[];
-                    };
-                    Object.entries(errorData).forEach(
-                        ([backendField, errorMessages]) => {
-                            const frontendField =
-                                fieldMapping[backendField] ||
-                                (backendField as keyof z.infer<
-                                    typeof reportSchema
-                                >);
-                            const message = Array.isArray(errorMessages)
-                                ? errorMessages[0]
-                                : errorMessages;
-                            toast.error(backendField, { description: message });
-                            form.setError(frontendField, { message: message });
-                        }
-                    );
-                }
-                return;
-            }
-            toast.error("Something went wrong. Please try again");
-        },
-    });
+    const { mutate, isPending, form, imageRef } = useSubmitReport();
+    const { getCurrentLocation, isLoading: locationLoading } = useGeoLocation();
+
     const onSubmit = (values: z.infer<typeof reportSchema>) => {
         const formData = new FormData();
         Object.entries(values).forEach(([field, value]) => {
@@ -130,23 +47,26 @@ const SubmitReportForm = () => {
         });
         mutate(formData);
     };
-    const handleSetLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                ({ coords }) => {
-                    toast.info(
-                        "Permission granted. Using current location for latitude and longitude."
-                    );
-                    form.setValue("location_lat", coords.latitude);
-                    form.setValue("location_lng", coords.longitude);
-                },
-                () =>
-                    toast.warning(
-                        "Permission denied to use device current location"
-                    )
+    const handleSetLocation = async () => {
+        try {
+            toast.info("Getting your location...");
+            const { coords, permissionDenied } = await getCurrentLocation();
+            if (coords && !permissionDenied) {
+                toast.success(
+                    "location found! Coordinates are filled automatically"
+                );
+                form.setValue("location_lat", coords.latitude);
+                form.setValue("location_lng", coords.longitude);
+            } else {
+                toast.error(
+                    "Location access denied. Please enter coordinates manually or check your browser permissions."
+                );
+            }
+        } catch (error) {
+            toast.error(
+                "Failed to get location. Please try again or enter coordinates manually."
             );
-        } else {
-            toast.error("Geolocation not supported");
+            console.error("Location error:", error);
         }
     };
     return (
@@ -399,6 +319,7 @@ const SubmitReportForm = () => {
                                                 size="sm"
                                                 className="mt-2"
                                                 onClick={handleSetLocation}
+                                                disabled={locationLoading}
                                             >
                                                 <MapPin className="h-4 w-4 mr-2" />
                                                 Use Current Location
