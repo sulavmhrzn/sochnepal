@@ -19,7 +19,8 @@ class CommentViewSet(ModelViewSet):
             super()
             .get_queryset()
             .filter(report=self.kwargs["report_pk"])
-            .select_related("report")
+            .select_related("report", "user")
+            .order_by("-created_at")
         )
 
     def list(self, request, *args, **kwargs):

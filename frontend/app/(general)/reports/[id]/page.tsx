@@ -7,11 +7,12 @@ import ReportHeroSection from "@/components/reports/ReportHeroSection";
 import ReportContent from "@/components/reports/ReportContent";
 import ReportNavigation from "@/components/reports/ReportNavigation";
 import { useReport } from "@/hooks/use-reports";
+import CommentsList from "@/components/comments/CommentsList";
+import CommentAdd from "@/components/comments/CommentAdd";
 
 const ReportDetailPage = () => {
     const params = useParams();
     const reportId = params.id as string;
-
     const { data: report } = useReport(+reportId);
 
     return (
@@ -26,6 +27,18 @@ const ReportDetailPage = () => {
                         <ReportDetailSide report={report} />
                         <ReporterInfo fullName={report.created_by.full_name} />
                     </div>
+                </div>
+                <div className="mt-4 space-y-4 bg-white border rounded-md p-4">
+                    <div className="flex items-center justify-between">
+                        <h1 className="font-semibold text-2xl text-gray-900">
+                            Community Discussion
+                        </h1>
+                        <span className="text-sm text-gray-500">
+                            Join the conversation about this civic issue
+                        </span>
+                    </div>
+                    <CommentAdd reportId={report.id} />
+                    <CommentsList reportId={report.id} />
                 </div>
             </div>
         </div>
