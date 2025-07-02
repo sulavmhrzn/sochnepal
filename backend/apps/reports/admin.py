@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Count
 
 from .models import Category, Report, UpVote
 
@@ -23,6 +24,7 @@ class ReportAdmin(admin.ModelAdmin):
         "created_by",
         "get_upvotes_count",
         "get_flags_count",
+        "get_comments_count",
         "is_flagged",
         "created_at",
         "updated_at",
@@ -31,8 +33,16 @@ class ReportAdmin(admin.ModelAdmin):
     search_fields = ["title"]
     readonly_fields = ["created_at", "updated_at"]
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("category", "created_by")
+            .prefetch_related("comments", "flags", "upvotes")
+        )
+
     def get_upvotes_count(self, obj):
-        return obj.upvotes_count
+        return obj.upvotes.count()
 
     get_upvotes_count.short_description = "total up votes"
 
@@ -40,6 +50,11 @@ class ReportAdmin(admin.ModelAdmin):
         return obj.flags.count()
 
     get_flags_count.short_description = "total flags"
+
+    def get_comments_count(self, obj):
+        return obj.comments.count()
+
+    get_comments_count.short_description = "total comments"
 
 
 @admin.register(UpVote)

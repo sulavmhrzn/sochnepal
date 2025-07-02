@@ -18,6 +18,7 @@ urlpatterns = [
                 path("contact-us/", include("apps.contacts.urls")),
                 path("reports/", include("apps.reports.urls")),
                 path("flags/", include("apps.flags.urls")),
+                path("reports/", include("apps.comments.urls")),
             ]
         ),
     ),

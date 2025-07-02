@@ -14,6 +14,7 @@ dependencies = [
     "django-silk>=5.4.0",
     "djangorestframework-simplejwt>=5.5.0",
     "djoser>=2.3.1",
+    "drf-nested-routers>=0.94.2",
     "pillow>=11.2.1",
     "psycopg[binary]>=3.2.9",
 ]
