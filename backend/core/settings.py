@@ -67,7 +67,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -96,7 +96,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
+PASSWORD_RESET_TIMEOUT = 86400  # 1 day in seconds
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -140,8 +140,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SITE_NAME = "SochNepal"
 
-# Email backend
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
@@ -156,6 +154,7 @@ REST_FRAMEWORK = {
 # DJOSER
 DJOSER = {
     "TOKEN_MODEL": None,
+    "SERIALIZERS": {"current_user": "apps.accounts.serializers.UserSerializer"},
 }
 
 # SIMPLE JWT
@@ -191,3 +190,13 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+# EMAIL
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+
+# CELERY
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")

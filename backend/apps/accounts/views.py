@@ -8,7 +8,11 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Profile
-from .serializers import ProfileSerializer
+from .serializers import (
+    ProfileSerializer,
+    VerifyEmailTokenSerializer,
+)
+from .tasks import send_verification_email
 
 
 class ProfileView(GenericAPIView):
@@ -64,3 +68,23 @@ class LogoutView(GenericAPIView):
         response = Response(status=200)
         response.delete_cookie(key=settings.SIMPLE_JWT["AUTH_COOKIE"])
         return response
+
+
+class VerifyEmailView(GenericAPIView):
+    serializer_class = VerifyEmailTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+class ResendVerificationEmailView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_verified:
+            return Response(data={"message": "email already verified"}, status=400)
+        send_verification_email.delay(user_pk=request.user.pk)
+        return Response(status=200)

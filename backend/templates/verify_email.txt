@@ -1,0 +1,4 @@
+hello {{first_name}}, 
+Welcome to SochNepal! We're excited to have you join our community.
+To get started and ensure the security of your account, please verify your email address.
+Copy and paste this link into your browser: {{url}}
