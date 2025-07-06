@@ -37,6 +37,7 @@ export const useLogin = () => {
                 email: form.getValues("email"),
                 firstName: "",
                 lastName: "",
+                is_verified: false,
             });
             toast.success("Logged in successfully");
             router.push("/dashboard");

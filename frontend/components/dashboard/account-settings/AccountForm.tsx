@@ -15,6 +15,7 @@ import { z } from "zod";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -25,6 +26,8 @@ import { customAxios } from "@/lib/customAxios";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
+import { MailWarning } from "lucide-react";
+import { useResendVerificationEmail } from "@/hooks/use-resend-verification-email-";
 
 const accountSchema = z.object({
     firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -41,6 +44,10 @@ type AccountFormFields = keyof z.infer<typeof accountSchema>;
 const AccountForm = () => {
     const authStore = useAuthStore();
     const [isLoaded, setIsLoaded] = useState(false);
+    const {
+        mutate: resendVerificationMutation,
+        status: resendVerificationStatus,
+    } = useResendVerificationEmail();
     const form = useForm<z.infer<typeof accountSchema>>({
         resolver: zodResolver(accountSchema),
         defaultValues: {
@@ -74,6 +81,7 @@ const AccountForm = () => {
                 email: data.email,
                 firstName: data.first_name,
                 lastName: data.last_name,
+                is_verified: data.is_verified,
             });
         },
         onError: (error) => {
@@ -209,6 +217,15 @@ const AccountForm = () => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email Address</FormLabel>
+
+                                    {!authStore.user?.is_verified && (
+                                        <FormDescription>
+                                            <span className="flex items-center gap-2">
+                                                <MailWarning className="w-5" />{" "}
+                                                Your email is not verified.
+                                            </span>
+                                        </FormDescription>
+                                    )}
                                     <FormControl>
                                         <Input
                                             type="email"
@@ -218,16 +235,26 @@ const AccountForm = () => {
                                             {...field}
                                         />
                                     </FormControl>
-                                    <p className="text-sm text-muted-foreground">
+                                    <FormDescription>
                                         Email address cannot be changed. Contact
                                         support if you need to update this.
-                                    </p>
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
-                        <div className="flex items-center gap-4 pt-4">
+                        <div className="grid grid-cols-2 items-center gap-4">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => resendVerificationMutation()}
+                                disabled={
+                                    authStore.user.is_verified ||
+                                    resendVerificationStatus === "pending"
+                                }
+                            >
+                                Send verification email
+                            </Button>
                             <Button type="submit" disabled={isPending}>
                                 {isPending ? "Saving..." : "Save Changes"}
                             </Button>

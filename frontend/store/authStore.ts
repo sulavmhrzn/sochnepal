@@ -6,6 +6,7 @@ interface User {
     email: string;
     firstName: string;
     lastName: string;
+    is_verified: boolean;
 }
 interface AuthState {
     isAuthenticated: boolean;
@@ -14,10 +15,12 @@ interface AuthState {
         email,
         firstName,
         lastName,
+        is_verified,
     }: {
         email: string;
         firstName: string;
         lastName: string;
+        is_verified: boolean;
     }) => void;
     initializeAuth: () => void;
     logout: () => void;
@@ -27,9 +30,12 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
     isAuthenticated: false,
     user: null,
-    login({ email, firstName, lastName }) {
+    login({ email, firstName, lastName, is_verified }) {
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify({ email }));
-        set({ user: { email, firstName, lastName }, isAuthenticated: true });
+        set({
+            user: { email, firstName, lastName, is_verified },
+            isAuthenticated: true,
+        });
     },
     async initializeAuth() {
         try {
@@ -39,6 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
                     email: data.email,
                     firstName: data.first_name,
                     lastName: data.last_name,
+                    is_verified: data.is_verified,
                 });
         } catch (error) {
             console.log(error);
