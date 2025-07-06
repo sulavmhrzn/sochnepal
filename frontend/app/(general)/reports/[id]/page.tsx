@@ -9,12 +9,14 @@ import ReportNavigation from "@/components/reports/ReportNavigation";
 import { useReport } from "@/hooks/use-reports";
 import CommentsList from "@/components/comments/CommentsList";
 import CommentAdd from "@/components/comments/CommentAdd";
+import EmailVerificationRequired from "@/components/auth/EmailVerificationRequired";
+import { useAuthStore } from "@/store/authStore";
 
 const ReportDetailPage = () => {
     const params = useParams();
     const reportId = params.id as string;
     const { data: report } = useReport(+reportId);
-
+    const { user } = useAuthStore();
     return (
         <div className="min-h-screen bg-gray-50">
             <ReportNavigation />
@@ -37,7 +39,11 @@ const ReportDetailPage = () => {
                             Join the conversation about this civic issue
                         </span>
                     </div>
-                    <CommentAdd reportId={report.id} />
+                    {!user?.is_verified ? (
+                        <EmailVerificationRequired action="comment on a report" />
+                    ) : (
+                        <CommentAdd reportId={report.id} />
+                    )}
                     <CommentsList reportId={report.id} />
                 </div>
             </div>

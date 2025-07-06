@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from apps.flags.models import Flag
+from apps.permissions import IsVerifiedUserOrReadOnly
 
 from .filters import ReportFilter
 from .models import Category, Report, UpVote
@@ -18,7 +19,11 @@ from .serializers import CategoryListSerializer, ReportSerializer, UpVoteSeriali
 
 class ReportViewSet(ModelViewSet):
     serializer_class = ReportSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+        IsVerifiedUserOrReadOnly,
+    ]
     queryset = (
         Report.objects.select_related(
             "category",
@@ -83,7 +88,7 @@ class CategoryView(ListAPIView):
 class UpVoteView(GenericAPIView):
     serializer_class = UpVoteSerializer
     queryset = UpVote.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsVerifiedUserOrReadOnly]
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)

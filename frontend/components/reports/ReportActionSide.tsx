@@ -11,9 +11,14 @@ import {
 } from "@/components/ui/tooltip";
 import ReportIssue from "./ReportIssue";
 import ReportUpVote from "./ReportUpVote";
+import EmailVerificationRequired from "../auth/EmailVerificationRequired";
 
 const ReportActionSide = ({ report }: { report: Report }) => {
-    const { isAuthenticated } = useAuthStore();
+    const { isAuthenticated, user } = useAuthStore();
+
+    if (!user?.is_verified) {
+        return <EmailVerificationRequired action="upvote reports" />;
+    }
 
     return (
         <Card>
