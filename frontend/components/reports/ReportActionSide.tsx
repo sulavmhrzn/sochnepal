@@ -16,7 +16,7 @@ import EmailVerificationRequired from "../auth/EmailVerificationRequired";
 const ReportActionSide = ({ report }: { report: Report }) => {
     const { isAuthenticated, user } = useAuthStore();
 
-    if (!user?.is_verified) {
+    if (isAuthenticated && !user?.is_verified) {
         return <EmailVerificationRequired action="upvote reports" />;
     }
 

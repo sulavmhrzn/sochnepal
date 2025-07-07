@@ -16,7 +16,7 @@ const ReportDetailPage = () => {
     const params = useParams();
     const reportId = params.id as string;
     const { data: report } = useReport(+reportId);
-    const { user } = useAuthStore();
+    const { user, isAuthenticated } = useAuthStore();
     return (
         <div className="min-h-screen bg-gray-50">
             <ReportNavigation />
@@ -39,7 +39,7 @@ const ReportDetailPage = () => {
                             Join the conversation about this civic issue
                         </span>
                     </div>
-                    {!user?.is_verified ? (
+                    {isAuthenticated && !user?.is_verified ? (
                         <EmailVerificationRequired action="comment on a report" />
                     ) : (
                         <CommentAdd reportId={report.id} />
