@@ -86,6 +86,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
+        "HOST": env("POSTGRES_HOST"),
         "NAME": env("POSTGRES_DB"),
         "USER": env("POSTGRES_USER"),
         "PASSWORD": env("POSTGRES_PASSWORD"),
@@ -202,3 +203,37 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 
 FRONTEND_URL = env("FRONTEND_URL")
+
+# LOGGING
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+    "formatters": {
+        "rich": {"datefmt": "[%X]"},
+    },
+    "handlers": {
+        "console": {
+            "class": "rich.logging.RichHandler",
+            "filters": ["require_debug_true"],
+            "formatter": "rich",
+            "level": "DEBUG",
+            "rich_tracebacks": True,
+            "tracebacks_show_locals": True,
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": [],
+            "level": "INFO",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
