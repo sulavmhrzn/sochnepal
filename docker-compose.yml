@@ -1,0 +1,44 @@
+services:
+    db:
+        image: postgres:14.18-bookworm
+        ports:
+            - 5433:5432
+        env_file:
+            - ./backend/.env
+        volumes:
+            - sochnepal-db-volume:/var/lib/postgresql/data
+
+    redis:
+        image: redis:8.0.3-alpine
+        expose:
+            - 6379
+
+    worker:
+        build: ./backend/
+        env_file:
+            - ./backend/.env
+        depends_on:
+            - db
+            - redis
+        entrypoint: /app/entrypoints/worker-entrypoint.sh
+
+    backend:
+        build: ./backend/
+        volumes:
+            - ./backend:/app
+            - media-data:/app/media
+            - static-data:/app/static
+        ports:
+            - 8000:8000
+        env_file:
+            - ./backend/.env
+        depends_on:
+            - db
+            - redis
+            - worker
+        entrypoint: /app/entrypoints/server-entrypoint.sh
+
+volumes:
+    sochnepal-db-volume:
+    media-data:
+    static-data:
