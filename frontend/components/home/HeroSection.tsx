@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import RotatingText from "../ui/RotatingText";
 
 const HeroSection = () => {
     return (
@@ -8,10 +9,24 @@ const HeroSection = () => {
             <div className="text-center">
                 <div className="mb-6">
                     <Badge
-                        variant="outline"
+                        variant="secondary"
                         className="px-4 py-2 border-primary text-sm font-medium"
                     >
-                        🇳🇵 Empowering Citizens Across Nepal
+                        <RotatingText
+                            texts={[
+                                "🇳🇵 Empowering Citizens Across Nepal",
+                                "📢 Raise Your Voice for Change",
+                                "🛠️ Report Civic Issues Instantly",
+                                "📍 Local Problems, National Awareness",
+                                "🚧 Fix Roads. Clean Streets. Together.",
+                                "🧹 End Garbage Crisis in Your Ward",
+                                "📸 Snap It. Report It. Track It.",
+                                "🔍 Transparency Starts With You",
+                                "⚖️ Accountability Made Simple",
+                                "🗳️ Your Voice Matters",
+                            ]}
+                            rotationInterval={2000}
+                        />
                     </Badge>
                 </div>
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
