@@ -41,6 +41,7 @@ dependencies = [
     { name = "drf-nested-routers" },
     { name = "pillow" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "requests" },
     { name = "rich" },
 ]
 
@@ -64,6 +65,7 @@ requires-dist = [
     { name = "drf-nested-routers", specifier = ">=0.94.2" },
     { name = "pillow", specifier = ">=11.2.1" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.9" },
+    { name = "requests", specifier = ">=2.32.4" },
     { name = "rich", specifier = ">=14.0.0" },
 ]
 

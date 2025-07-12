@@ -46,6 +46,11 @@ services:
         ports:
             - 3000:3000
 
+    ai-service:
+        build: ./ai-service/
+        ports:
+            - 8001:8001
+
 volumes:
     sochnepal-db-volume:
     media-data:
