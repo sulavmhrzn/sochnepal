@@ -1,5 +1,9 @@
 # SochNepal 🏛️
 
+> **Note:** This branch contains the version of SochNepal prepared for my university project submission.
+
+> **AI Service:** This branch contains ai-service micro service served using FastAPI.
+
 A civic engagement platform that empowers Nepali citizens to report, track, and resolve community issues. Built to strengthen democracy through digital participation and government accountability.
 
 ## 🚀 Features
@@ -19,6 +23,10 @@ A civic engagement platform that empowers Nepali citizens to report, track, and 
 -   **Redis** - Caching and broker
 -   **Celery** - Background task processing
 -   **JWT** - Authentication
+
+### Microservice
+
+-   **FastAPI** - Python web framework
 
 ### Frontend
 
@@ -141,6 +149,7 @@ docker compose exec backend python manage.py populate_categories
 
 -   **Frontend**: http://localhost:3000
 -   **Backend API**: http://localhost:8000
+-   **ai-service**: http://localhost:8001
 -   **Admin Panel**: http://localhost:8000/admin
 
 ## 🐳 Docker Services
@@ -152,6 +161,7 @@ The application runs the following services:
 -   **backend** - Django API server (port 8000)
 -   **frontend** - Next.js application (port 3000)
 -   **worker** - Celery background tasks
+-   **ai-service** - FastAPI server
 
 ## 🤝 Contributing
 
